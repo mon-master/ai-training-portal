@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// GASのWebアプリURLはここに設定する（デプロイ後に更新）
+const GAS_APP_URL = '';
+---
+
+<Layout title="ワークログ提出" description="AI研修のワークログ登録フォーム">
+  <!-- ページヘッダー -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-10 px-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-sm text-blue-200 mb-1">
+        <a href="/" class="hover:text-white">ホーム</a> &rsaquo; ワークログ提出
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold">ワークログ提出</h1>
+      <p class="text-blue-200 mt-2 text-sm">各Dayのワーク終了後に、学びの記録を提出してください</p>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4 py-10">
+
+    <!-- 提出の流れ -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h2 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span>📋</span> 提出の流れ
+      </h2>
+      <div class="space-y-3">
+        {[
+          { step: '①', icon: '🤖', title: 'GPTsで「開始」と入力', desc: 'AI研修ワーク補助 GPTを開いて「開始」と入力し、ワークを始める' },
+          { step: '②', icon: '💼', title: 'ワークを実施する', desc: '業務の練習・相談をGPTと行う。個人情報は入力しない' },
+          { step: '③', icon: '🏁', title: 'GPTsで「終了」と入力', desc: '「終了」と入力すると、まとめが自動作成される' },
+          { step: '④', icon: '🔍', title: 'まとめを確認する', desc: '個人情報・機密情報が含まれていないか確認する。含まれていたら修正する' },
+          { step: '⑤', icon: '📨', title: 'フォームに貼り付けて送信', desc: 'ワークログフォームを開き、まとめをコピーして各欄に貼り付けて送信する' },
+        ].map(({ step, icon, title, desc }) => (
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+              {step}
+            </div>
+            <div class="flex-1">
+              <div class="font-bold text-sm text-gray-800 flex items-center gap-1.5">
+                <span>{icon}</span> {title}
+              </div>
+              <p class="text-xs text-gray-500 mt-0.5">{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- 個人情報チェック -->
+    <div class="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-8">
+      <h2 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+        <span>⚠️</span> 送信前に必ず確認
+      </h2>
+      <div class="space-y-2">
+        {[
+          'お客様の名前・注文番号・住所・電話番号・メールアドレスなどの個人情報は含まれていない',
+          '会社の機密情報・金額・社外秘の情報は含まれていない',
+          '業務改善の記録として使える形に整理されている（具体的な顧客情報ではなく、業務のパターンとして書かれている）',
+        ].map((item) => (
+          <label class="flex items-start gap-2 cursor-pointer">
+            <input type="checkbox" class="mt-0.5 w-4 h-4 accent-amber-600" />
+            <span class="text-sm text-amber-900">{item}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <!-- フォームへのリンク -->
+    {GAS_APP_URL ? (
+      <div class="text-center">
+        <a href={GAS_APP_URL}
+           target="_blank"
+           rel="noopener noreferrer"
+           class="inline-block bg-blue-600 text-white font-bold text-lg px-10 py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg">
+          📝 ワークログ登録フォームを開く
+        </a>
+        <p class="text-xs text-gray-400 mt-3">外部サイト（Google Apps Script）が開きます</p>
+      </div>
+    ) : (
+      <div class="bg-gray-100 border border-gray-300 rounded-xl p-8 text-center">
+        <div class="text-4xl mb-3">🔧</div>
+        <h3 class="font-bold text-gray-700 mb-2">ワークログフォームの準備中</h3>
+        <p class="text-sm text-gray-500">
+          フォームのURLは研修担当者から案内されます。<br />
+          準備ができ次第、こちらにリンクが表示されます。
+        </p>
+      </div>
+    )}
+
+    <!-- GASデプロイ案内（管理者向け） -->
+    <div class="mt-10 bg-gray-50 border border-gray-200 rounded-xl p-6">
+      <h2 class="font-bold text-gray-700 mb-3 flex items-center gap-2">
+        <span>⚙️</span> 管理者向け：フォームURLの設定方法
+      </h2>
+      <ol class="text-sm text-gray-600 space-y-2">
+        <li>1. Google Apps ScriptでCode.gsをデプロイする</li>
+        <li>2. デプロイURL（ウェブアプリURL）をコピーする</li>
+        <li>3. このファイル（submit.astro）の <code class="bg-gray-200 px-1 rounded text-xs">GAS_APP_URL</code> に貼り付ける</li>
+        <li>4. サイトを再ビルドしてデプロイする</li>
+      </ol>
+      <p class="text-xs text-gray-400 mt-3">
+        詳細は <code class="bg-gray-200 px-1 rounded">webapp/facilitator_operation_guide.md</code> を参照
+      </p>
+    </div>
+  </div>
+</Layout>

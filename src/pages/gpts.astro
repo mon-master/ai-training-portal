@@ -1,0 +1,225 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="GPTs活用" description="AI研修で使うOpenAI Custom GPTsの設定方法と使い方">
+  <!-- ページヘッダー -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-10 px-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-sm text-blue-200 mb-1">
+        <a href="/" class="hover:text-white">ホーム</a> &rsaquo; GPTs活用
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold">GPTs活用ガイド</h1>
+      <p class="text-blue-200 mt-2 text-sm">AI研修で使うOpenAI Custom GPTsの設定と使い方</p>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4 py-10">
+
+    <!-- GPTsとは -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span>🤖</span> GPTsとは？
+      </h2>
+      <p class="text-gray-700 text-sm leading-relaxed mb-4">
+        OpenAIが提供する「カスタムGPT」機能です。ChatGPTに専用の役割・設定を与えることで、<br />
+        <strong>「この用途専用のAIアシスタント」</strong>を誰でも作れます。
+      </p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="font-bold text-green-700 text-sm mb-2">普通のChatGPT</div>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>• 毎回役割を説明する必要がある</li>
+            <li>• 業務ごとに指示を変える手間がある</li>
+            <li>• 汎用的だが自分の業務に特化しにくい</li>
+          </ul>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="font-bold text-blue-700 text-sm mb-2">業務用GPTs</div>
+          <ul class="text-xs text-gray-600 space-y-1">
+            <li>• 起動するだけで専用モードになる</li>
+            <li>• 毎回の説明が不要</li>
+            <li>• 自分の業務に特化した回答が返ってくる</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 研修用GPTs：AI研修ワーク補助 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+        <span>📚</span> 研修用GPTs：AI研修ワーク補助 GPT
+      </h2>
+      <p class="text-sm text-gray-600 mb-5">
+        この研修では専用の「AI研修ワーク補助 GPT」を使います。<br />
+        「開始」でワークを始め、「終了」でやり取りのまとめを自動作成します。
+      </p>
+
+      <div class="bg-gray-50 rounded-lg p-4 mb-5">
+        <h3 class="font-bold text-gray-700 text-sm mb-3">使い方の流れ</h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {[
+            { step: '①', label: 'GPTsを開く' },
+            { step: '②', label: '「開始」と入力' },
+            { step: '③', label: '業務の練習をする' },
+            { step: '④', label: '「終了」と入力' },
+            { step: '⑤', label: 'まとめを確認して提出' },
+          ].map(({ step, label }) => (
+            <div class="bg-white border border-gray-200 rounded-lg p-2 text-center text-xs">
+              <div class="font-bold text-blue-600 mb-1">{step}</div>
+              <div class="text-gray-700 leading-tight">{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5">
+        <h3 class="font-bold text-amber-800 text-sm mb-2">⚠️ ワーク中の注意</h3>
+        <ul class="text-sm text-gray-700 space-y-1">
+          <li>• お客様の名前・注文番号・住所・電話番号・メールアドレスは入力しない</li>
+          <li>• 金額・取引情報・社外秘の情報は入力しない</li>
+          <li>• 「〇〇様」「A社」など仮の名前を使う</li>
+          <li>• 提出前にまとめ内容の個人情報チェックを行う</li>
+        </ul>
+      </div>
+
+      <div class="bg-gray-900 text-green-400 rounded-lg p-4 text-sm font-mono">
+        <div class="text-gray-400 text-xs mb-2"># GPTsの設定文（Instructions）</div>
+        <pre class="whitespace-pre-wrap text-xs leading-relaxed overflow-x-auto">{`# あなたの役割
+あなたはAI研修のワーク補助担当です。
+受講者が業務でのChatGPT活用を練習する際に、
+一緒に考え、整理するサポートをします。
+
+## 受講者が「開始」と入力したとき
+ワーク開始の案内を出す
+
+## 受講者が「終了」と入力したとき
+今までのやり取りをもとにまとめを出力する：
+・今日のワークテーマ
+・対象業務
+・やり取りの要約
+・気づいたこと
+・AIに任せられそうなこと
+・人間が判断すべきこと
+・改善できそうなこと
+・次に試すこと`}</pre>
+      </div>
+    </div>
+
+    <!-- GPTs作成ガイド（Day8向け） -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+        <span>🔧</span> 自分のGPTを作る（Day 8向け）
+      </h2>
+      <p class="text-sm text-gray-600 mb-5">
+        Day 7で作った業務整理シートをもとに、自分の業務専用GPTを作成します。
+      </p>
+
+      <div class="space-y-4">
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0 w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+          <div>
+            <div class="font-bold text-sm text-gray-800">ChatGPTにログイン（Plusプラン必要）</div>
+            <div class="text-xs text-gray-500 mt-0.5">左サイドバー「GPTを探す」→「作成する」</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0 w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+          <div>
+            <div class="font-bold text-sm text-gray-800">「設定」タブを選ぶ</div>
+            <div class="text-xs text-gray-500 mt-0.5">直接入力する方法が分かりやすい</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0 w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+          <div>
+            <div class="font-bold text-sm text-gray-800">名前・説明・Instructionsを入力</div>
+            <div class="text-xs text-gray-500 mt-0.5">Instructionsが最も重要。Day7の業務整理シートを使って書く</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0 w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+          <div>
+            <div class="font-bold text-sm text-gray-800">「保存」してテスト</div>
+            <div class="text-xs text-gray-500 mt-0.5">「自分のみ」で保存してテスト会話で確認する</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 class="font-bold text-blue-800 text-sm mb-2">Instructions（設定文）の基本テンプレート</h3>
+        <pre class="text-xs text-gray-700 bg-white rounded p-3 border border-gray-200 overflow-x-auto whitespace-pre-wrap">{`# あなたの役割
+あなたは[業務名]の専門家アシスタントです。
+
+# 対応する業務
+[具体的な業務内容]
+
+# 出力形式
+[出力内容・形式]
+
+# 必ず守ること
+- 個人情報は絶対に出力しない
+- 最終判断は「担当者に確認してください」と伝える`}</pre>
+      </div>
+    </div>
+
+    <!-- 研修フェーズ別GPTs設定追加例 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span>📅</span> Dayごとの追加設定例
+      </h2>
+      <div class="space-y-4">
+        {[
+          {
+            label: 'Day 1〜3（検索から相談へ）',
+            color: 'green',
+            content: `「背景つきのお願い」に変えるよう優しく案内する。
+お願いの基本型：
+「あなたは〇〇です。私は〇〇をしたいです。
+背景は〇〇です。〇〇してください。」`,
+          },
+          {
+            label: 'Day 7〜8（GPT作成）',
+            color: 'orange',
+            content: `業務整理シートを一緒に完成させる。
+・対象業務（1つに絞る）
+・GPTに入力する情報
+・GPTに出力させたいもの
+・GPTにやらせてはいけないこと
+・人間が確認・判断すること`,
+          },
+          {
+            label: 'Day 9〜10（業務フロー・改善提案）',
+            color: 'purple',
+            content: `業務フローと改善提案を作成する。
+業務フローは番号つきで整理し、
+GPTを使うタイミングを明確にする。
+改善提案は「課題・原因・改善案・期待効果・次の一手」の形でまとめる。`,
+          },
+        ].map(({ label, color, content }) => (
+          <div class={`border rounded-lg overflow-hidden`}>
+            <div class={`px-4 py-2 text-sm font-bold ${
+              color === 'green' ? 'bg-green-50 text-green-700 border-b border-green-200' :
+              color === 'orange' ? 'bg-orange-50 text-orange-700 border-b border-orange-200' :
+              'bg-purple-50 text-purple-700 border-b border-purple-200'
+            }`}>{label}</div>
+            <pre class="text-xs text-gray-700 bg-gray-50 p-4 whitespace-pre-wrap leading-relaxed">{content}</pre>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- ワークログ提出へのリンク -->
+    <div class="bg-blue-600 rounded-xl p-6 text-white text-center">
+      <div class="text-3xl mb-2">📝</div>
+      <h3 class="font-bold mb-1">ワークが終わったら提出しましょう</h3>
+      <p class="text-blue-100 text-sm mb-4">
+        GPTsで「終了」と入力してまとめを作成後、ワークログフォームに提出してください
+      </p>
+      <a href="/submit"
+         class="inline-block bg-white text-blue-700 font-bold px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors">
+        ワークログを提出する
+      </a>
+    </div>
+  </div>
+</Layout>

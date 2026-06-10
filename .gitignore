@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# 設定ファイル（NAS管理）
+*.settings.local.json

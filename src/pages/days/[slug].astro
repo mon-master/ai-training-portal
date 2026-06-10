@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const days = await getCollection('days');
+  return days.map((day) => ({
+    params: { slug: day.id.replace('.md', '') },
+    props: { day },
+  }));
+}
+
+const { day } = Astro.props;
+const { Content } = await render(day);
+
+const allDays = (await getCollection('days')).sort((a, b) => a.data.day - b.data.day);
+const currentIndex = allDays.findIndex(d => d.id === day.id);
+const prevDay = currentIndex > 0 ? allDays[currentIndex - 1] : null;
+const nextDay = currentIndex < allDays.length - 1 ? allDays[currentIndex + 1] : null;
+
+function getPhase(dayNum: number): { label: string; color: string } {
+  if (dayNum <= 3) return { label: '前半：ChatGPT基礎', color: 'text-green-600 bg-green-50 border-green-200' };
+  if (dayNum <= 6) return { label: '中盤：自分に合わせる', color: 'text-yellow-600 bg-yellow-50 border-yellow-200' };
+  return { label: '後半：自分のGPTを作る', color: 'text-purple-600 bg-purple-50 border-purple-200' };
+}
+
+const phase = getPhase(day.data.day);
+---
+
+<Layout title={`Day${day.data.day}: ${day.data.title}`} description={day.data.goals.join('。')}>
+  <!-- ページヘッダー -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8 px-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-sm text-blue-200 mb-3">
+        <a href="/" class="hover:text-white">ホーム</a>
+        &rsaquo; <a href="/curriculum" class="hover:text-white">カリキュラム</a>
+        &rsaquo; Day{day.data.day}
+      </div>
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center font-bold text-2xl">
+          {day.data.day}
+        </div>
+        <div>
+          <div class="text-blue-200 text-xs mb-0.5">{day.data.level}</div>
+          <h1 class="text-xl md:text-2xl font-bold leading-tight">{day.data.title}</h1>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <span class="text-xs bg-white/20 text-white px-3 py-1 rounded-full">
+          ⏱ {day.data.duration}
+        </span>
+        <span class={`text-xs px-3 py-1 rounded-full border ${phase.color}`}>
+          {phase.label}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <!-- 今日のゴール -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-8">
+      <h2 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
+        <span>🎯</span> 今日のゴール
+      </h2>
+      <ul class="space-y-1">
+        {day.data.goals.map((goal: string) => (
+          <li class="flex items-start gap-2 text-sm text-blue-700">
+            <span class="flex-shrink-0 w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mt-0.5">✓</span>
+            {goal}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- 本文コンテンツ -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 prose prose-sm max-w-none
+      prose-headings:font-bold prose-headings:text-gray-800
+      prose-h2:text-lg prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-2 prose-h2:mb-4
+      prose-h3:text-base prose-h3:text-blue-700
+      prose-p:text-gray-700 prose-p:leading-relaxed
+      prose-li:text-gray-700
+      prose-code:bg-gray-100 prose-code:text-blue-800 prose-code:px-1 prose-code:rounded
+      prose-pre:bg-gray-50 prose-pre:border prose-pre:border-gray-200
+      prose-strong:text-gray-900
+      prose-table:text-sm">
+      <Content />
+    </div>
+
+    <!-- 提出物 -->
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
+      <h2 class="font-bold text-amber-800 mb-2 flex items-center gap-2">
+        <span>📋</span> 今日の提出物
+      </h2>
+      <p class="text-sm text-amber-700">{day.data.deliverable}</p>
+    </div>
+
+    <!-- ワークログ提出ボタン -->
+    <div class="bg-blue-600 rounded-xl p-6 text-white text-center mb-8">
+      <div class="text-2xl mb-2">📝</div>
+      <h3 class="font-bold mb-1">ワークが終わったら提出しましょう</h3>
+      <p class="text-blue-100 text-sm mb-4">
+        GPTsで「終了」と入力してまとめを作成し、フォームに貼り付けて送信してください
+      </p>
+      <a href="/submit"
+         class="inline-block bg-white text-blue-700 font-bold px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors">
+        ワークログを提出する
+      </a>
+    </div>
+
+    <!-- 前後ナビゲーション -->
+    <div class="grid grid-cols-2 gap-4">
+      {prevDay ? (
+        <a href={`/days/${prevDay.id.replace('.md', '')}`}
+           class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow group">
+          <div class="text-xs text-gray-400 mb-1">← 前の日</div>
+          <div class="text-xs font-bold text-gray-500 mb-1">Day{prevDay.data.day}</div>
+          <div class="text-sm text-gray-800 font-medium group-hover:text-blue-600 transition-colors leading-tight">
+            {prevDay.data.title}
+          </div>
+        </a>
+      ) : <div></div>}
+
+      {nextDay ? (
+        <a href={`/days/${nextDay.id.replace('.md', '')}`}
+           class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow group text-right">
+          <div class="text-xs text-gray-400 mb-1">次の日 →</div>
+          <div class="text-xs font-bold text-gray-500 mb-1">Day{nextDay.data.day}</div>
+          <div class="text-sm text-gray-800 font-medium group-hover:text-blue-600 transition-colors leading-tight">
+            {nextDay.data.title}
+          </div>
+        </a>
+      ) : <div></div>}
+    </div>
+  </div>
+</Layout>

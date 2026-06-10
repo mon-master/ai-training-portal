@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DayCard from '../components/DayCard.astro';
+import { getCollection } from 'astro:content';
+
+const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.day);
+
+const phases = [
+  { label: '前半 Day 1〜3', theme: 'ChatGPT基礎', desc: '検索から「仕事の相談」へ', color: 'green', days: days.filter(d => d.data.day <= 3) },
+  { label: '中盤 Day 4〜6', theme: '自分に合わせる', desc: '設定・プロジェクト・指示の作り方', color: 'yellow', days: days.filter(d => d.data.day >= 4 && d.data.day <= 6) },
+  { label: '後半 Day 7〜10', theme: '自分のGPTを作る', desc: '業務GPT作成・フロー配置・改善提案', color: 'purple', days: days.filter(d => d.data.day >= 7) },
+];
+---
+
+<Layout title="カリキュラム" description="AIに仕事を奪われない人になる10日間研修のカリキュラム一覧">
+  <!-- ページヘッダー -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-10 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-sm text-blue-200 mb-1">
+        <a href="/" class="hover:text-white">ホーム</a> &rsaquo; カリキュラム
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold">10日間カリキュラム</h1>
+      <p class="text-blue-200 mt-2 text-sm">ChatGPT活用レベル1〜10を段階的に学ぶプログラム</p>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <!-- 全体マップ -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-10">
+      <h2 class="font-bold text-gray-800 mb-4">ChatGPT活用レベルと10日間の対応</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="text-left py-2 pr-4 text-gray-500 font-medium">Day</th>
+              <th class="text-left py-2 pr-4 text-gray-500 font-medium">テーマ</th>
+              <th class="text-left py-2 text-gray-500 font-medium">レベル</th>
+            </tr>
+          </thead>
+          <tbody>
+            {days.map((day) => (
+              <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td class="py-2.5 pr-4">
+                  <a href={`/days/${day.id.replace('.md', '')}`} class="text-blue-600 font-bold hover:underline">
+                    Day{day.data.day}
+                  </a>
+                </td>
+                <td class="py-2.5 pr-4 text-gray-700">
+                  <a href={`/days/${day.id.replace('.md', '')}`} class="hover:text-blue-600">{day.data.title}</a>
+                </td>
+                <td class="py-2.5 text-gray-500 text-xs">{day.data.level}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- フェーズ別カード -->
+    {phases.map((phase) => (
+      <div class="mb-10">
+        <div class={`flex items-center gap-3 mb-4 pb-3 border-b-2 ${
+          phase.color === 'green' ? 'border-green-400' :
+          phase.color === 'yellow' ? 'border-yellow-400' : 'border-purple-400'
+        }`}>
+          <div>
+            <div class={`text-xs font-bold uppercase tracking-wider ${
+              phase.color === 'green' ? 'text-green-600' :
+              phase.color === 'yellow' ? 'text-yellow-600' : 'text-purple-600'
+            }`}>{phase.label}</div>
+            <h2 class="text-xl font-bold text-gray-800">{phase.theme}</h2>
+            <p class="text-sm text-gray-500">{phase.desc}</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          {phase.days.map((day) => (
+            <DayCard
+              day={day.data.day}
+              title={day.data.title}
+              level={day.data.level}
+              duration={day.data.duration}
+              id={day.id}
+            />
+          ))}
+        </div>
+      </div>
+    ))}
+
+    <!-- 1日の流れ -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-10">
+      <h2 class="font-bold text-blue-800 mb-4">研修スケジュール例（1日の流れ）</h2>
+      <div class="grid md:grid-cols-5 gap-2">
+        {[
+          { time: '0:00〜0:10', content: '前日の振り返り・今日のテーマ説明' },
+          { time: '0:10〜0:40', content: '学ぶこと（レクチャー）' },
+          { time: '0:40〜1:10', content: '練習ワーク' },
+          { time: '1:10〜1:20', content: '振り返り・提出物確認' },
+          { time: '1:20〜1:30', content: '翌日の宿題・案内' },
+        ].map(({ time, content }) => (
+          <div class="bg-white rounded-lg p-3 text-center text-sm border border-blue-100">
+            <div class="font-bold text-blue-600 text-xs mb-1">{time}</div>
+            <div class="text-gray-700 text-xs leading-snug">{content}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

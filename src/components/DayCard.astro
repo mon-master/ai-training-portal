@@ -1,0 +1,53 @@
+---
+interface Props {
+  day: number;
+  title: string;
+  level: string;
+  duration: string;
+  id: string;
+  isCompleted?: boolean;
+}
+
+const { day, title, level, duration, id, isCompleted = false } = Astro.props;
+
+const phaseColors: Record<string, string> = {
+  '前半': 'bg-green-100 text-green-700 border-green-200',
+  '中盤': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  '後半': 'bg-purple-100 text-purple-700 border-purple-200',
+};
+
+function getPhase(day: number): string {
+  if (day <= 3) return '前半';
+  if (day <= 6) return '中盤';
+  return '後半';
+}
+
+const phase = getPhase(day);
+const phaseColor = phaseColors[phase];
+---
+
+<a href={`/days/${id.replace('.md', '')}`}
+   class="block bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+  <div class="flex items-start gap-4">
+    <div class="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg group-hover:bg-blue-700 transition-colors">
+      {day}
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 mb-1 flex-wrap">
+        <span class={`text-xs font-medium px-2 py-0.5 rounded-full border ${phaseColor}`}>
+          {phase}
+        </span>
+        <span class="text-xs text-gray-500">{level}</span>
+      </div>
+      <h3 class="font-bold text-gray-800 text-sm leading-snug group-hover:text-blue-600 transition-colors">
+        {title}
+      </h3>
+      <p class="text-xs text-gray-500 mt-1">所要時間：{duration}</p>
+    </div>
+    <div class="flex-shrink-0 text-gray-300 group-hover:text-blue-400 transition-colors">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+</a>
