@@ -1,0 +1,35 @@
+================================================================
+ai-training-portal - 起動方法
+================================================================
+
+■ 開発サーバー起動（コンテンツ編集時）
+  cd C:\Users\%USERNAME%\ai-training-portal
+  npx astro dev
+  → http://localhost:4321 で確認
+
+■ ビルド（デプロイ前）
+  npx astro build
+
+■ 2回目以降（既存PC）
+  cd C:\Users\%USERNAME%\ai-training-portal
+  git pull
+  claude
+
+■ ノートPC初回（設定復元）
+  .\sync-settings.ps1 -Mode restore
+  claude
+
+■ 作業後（設定をNASに保存）
+  .\sync-settings.ps1 -Mode backup
+
+----------------------------------------------------------------
+
+■ コンテンツ更新の場所
+
+  研修内容:  src\content\days\day-XX.md
+  GPTsページ: src\pages\gpts.astro
+  ワークログURL設定: src\pages\submit.astro の GAS_APP_URL
+
+----------------------------------------------------------------
+GitHub: https://github.com/mon-master/ai-training-portal
+================================================================
