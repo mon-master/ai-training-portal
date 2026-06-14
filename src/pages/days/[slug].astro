@@ -112,7 +112,7 @@ const dayNum = String(day.data.day).padStart(2, '0');
               { icon:'▶️', label:'「開始」と入力', desc:'GPTsに「開始」と打つだけでワークが始まる', color:'#06b6d4' },
               { icon:'💬', label:'業務の相談・練習をする', desc:'個人情報・機密情報は入力しないこと', color:'#10b981', warn:true },
               { icon:'⏹️', label:'「終了」と入力', desc:'まとめが自動生成される', color:'#f59e0b' },
-              { icon:'📝', label:'ワークログを提出する', desc:'まとめを確認して提出フォームへ', color:'#ec4899', link:'/submit' },
+              { icon:'📝', label:'クリア報告を送る', desc:'まとめを確認して提出フォームへ', color:'#ec4899', link:'/submit' },
             ].map(({ icon, label, desc, color, link, warn }, i) => (
               <div style={`
                 display:flex;align-items:center;gap:14px;
@@ -221,7 +221,7 @@ const dayNum = String(day.data.day).padStart(2, '0');
       </div>
     </section>
 
-    <!-- ===== ワークログ提出CTA ===== -->
+    <!-- ===== クリア報告CTA ===== -->
     <section style="margin-bottom:48px;" class="reveal">
       <div style="
         border-radius:20px;
@@ -250,7 +250,7 @@ const dayNum = String(day.data.day).padStart(2, '0');
           "
           onmouseover="this.style.boxShadow='0 0 40px rgba(59,130,246,0.6)';this.style.transform='translateY(-2px)'"
           onmouseout="this.style.boxShadow='0 0 25px rgba(59,130,246,0.35)';this.style.transform='translateY(0)'"
-          >ワークログを提出する →</a>
+          >クリア報告を送る →</a>
         </div>
       </div>
     </section>
