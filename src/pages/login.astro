@@ -1,0 +1,147 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+
+const url = Astro.url;
+const error = url.searchParams.get('error');
+const registered = url.searchParams.get('registered');
+
+const errorMessages: Record<string, string> = {
+  invalid:  '社員番号またはパスワードが正しくありません',
+  missing:  '社員番号とパスワードを入力してください',
+  server:   'サーバーエラーが発生しました。しばらくしてから再度お試しください',
+};
+---
+
+<PublicLayout title="ログイン" description="AI研修ポータルへログイン">
+
+  <section style="
+    min-height:calc(100vh - 60px);
+    display:flex;align-items:center;justify-content:center;
+    padding:60px 24px;
+    background:linear-gradient(135deg,#050b18 0%,#0a1628 50%,#050b18 100%);
+    position:relative;overflow:hidden;
+  " class="grid-bg">
+
+    <!-- 背景オーブ -->
+    <div style="position:absolute;top:20%;left:10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.07),transparent 70%);pointer-events:none;animation:orb-drift 12s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:15%;right:8%;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.07),transparent 70%);pointer-events:none;animation:orb-drift 15s ease-in-out infinite reverse;"></div>
+
+    <div style="width:100%;max-width:440px;position:relative;z-index:1;">
+
+      <!-- ロゴ -->
+      <div style="text-align:center;margin-bottom:40px;">
+        <a href="/" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;margin-bottom:8px;">
+          <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);border:1px solid rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(99,102,241,0.35);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="3" fill="white" opacity="0.9"/>
+              <circle cx="4" cy="12" r="2" fill="white" opacity="0.5"/>
+              <circle cx="20" cy="12" r="2" fill="white" opacity="0.5"/>
+              <circle cx="12" cy="4" r="2" fill="white" opacity="0.5"/>
+              <circle cx="12" cy="20" r="2" fill="white" opacity="0.5"/>
+              <line x1="12" y1="9" x2="12" y2="6" stroke="white" stroke-width="1.2" opacity="0.6"/>
+              <line x1="12" y1="15" x2="12" y2="18" stroke="white" stroke-width="1.2" opacity="0.6"/>
+              <line x1="9" y1="12" x2="6" y2="12" stroke="white" stroke-width="1.2" opacity="0.6"/>
+              <line x1="15" y1="12" x2="18" y2="12" stroke="white" stroke-width="1.2" opacity="0.6"/>
+            </svg>
+          </div>
+        </a>
+        <h1 style="font-size:1.5rem;font-weight:900;color:#f1f5f9;margin-bottom:6px;">ログイン</h1>
+        <p style="font-size:0.85rem;color:#64748b;">AI研修ポータルへようこそ</p>
+      </div>
+
+      <!-- 登録完了通知 -->
+      {registered && (
+        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+          <span>✅</span>
+          <p style="font-size:0.83rem;color:#6ee7b7;">登録が完了しました。以下からログインしてください。</p>
+        </div>
+      )}
+
+      <!-- エラー表示 -->
+      {error && (
+        <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+          <span>⚠️</span>
+          <p style="font-size:0.83rem;color:#fca5a5;">{errorMessages[error] ?? 'エラーが発生しました'}</p>
+        </div>
+      )}
+
+      <!-- ログインフォーム -->
+      <div class="glow-card" style="border-radius:20px;padding:36px;border:1px solid rgba(59,130,246,0.18);">
+        <form action="/api/login" method="POST" style="display:flex;flex-direction:column;gap:22px;">
+
+          <!-- 社員番号 -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              社員番号
+            </label>
+            <input
+              type="text"
+              name="employeeId"
+              required
+              placeholder="EMP-0001"
+              autocomplete="username"
+              style="
+                width:100%;padding:13px 16px;border-radius:10px;
+                background:rgba(15,23,42,0.9);
+                border:1px solid rgba(59,130,246,0.2);
+                color:#e2e8f0;font-size:0.95rem;outline:none;
+                transition:border-color 0.2s,box-shadow 0.2s;
+                box-sizing:border-box;
+              "
+              onfocus="this.style.borderColor='rgba(59,130,246,0.6)';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+              onblur="this.style.borderColor='rgba(59,130,246,0.2)';this.style.boxShadow='none'"
+            />
+          </div>
+
+          <!-- パスワード -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              パスワード
+            </label>
+            <input
+              type="password"
+              name="password"
+              required
+              placeholder="パスワードを入力"
+              autocomplete="current-password"
+              style="
+                width:100%;padding:13px 16px;border-radius:10px;
+                background:rgba(15,23,42,0.9);
+                border:1px solid rgba(59,130,246,0.2);
+                color:#e2e8f0;font-size:0.95rem;outline:none;
+                transition:border-color 0.2s,box-shadow 0.2s;
+                box-sizing:border-box;
+              "
+              onfocus="this.style.borderColor='rgba(59,130,246,0.6)';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+              onblur="this.style.borderColor='rgba(59,130,246,0.2)';this.style.boxShadow='none'"
+            />
+          </div>
+
+          <!-- ログインボタン -->
+          <button type="submit" style="
+            width:100%;padding:14px;border-radius:12px;
+            background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+            color:#fff;font-size:1rem;font-weight:700;
+            border:none;cursor:pointer;margin-top:4px;
+            box-shadow:0 0 28px rgba(59,130,246,0.4);
+            transition:all 0.25s;
+          "
+          onmouseover="this.style.boxShadow='0 0 48px rgba(59,130,246,0.65)';this.style.transform='translateY(-1px)'"
+          onmouseout="this.style.boxShadow='0 0 28px rgba(59,130,246,0.4)';this.style.transform='translateY(0)'"
+          >
+            研修ポータルへ入る
+          </button>
+
+        </form>
+      </div>
+
+      <!-- 申し込みリンク -->
+      <p style="text-align:center;margin-top:24px;font-size:0.82rem;color:#64748b;">
+        まだ登録されていない方は
+        <a href="/#register" style="color:#60a5fa;font-weight:600;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">受講申し込みへ →</a>
+      </p>
+
+    </div>
+  </section>
+
+</PublicLayout>

@@ -1,394 +1,365 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import DayCard from '../components/DayCard.astro';
-import { getCollection } from 'astro:content';
+import PublicLayout from '../layouts/PublicLayout.astro';
 
-const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.day);
+const url = Astro.url;
+const error = url.searchParams.get('error');
+const registered = url.searchParams.get('registered');
+
+const errorMessages: Record<string, string> = {
+  missing:           '必須項目が入力されていません',
+  password_mismatch: 'パスワードが一致しません',
+  duplicate:         'この社員番号はすでに登録されています',
+  server:            'サーバーエラーが発生しました。しばらくしてから再度お試しください',
+};
+
+const features = [
+  {
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    color: '#3b82f6',
+    title: '「検索」から「相談」へ',
+    desc: 'ChatGPTに短い一言を打ち込んでいるだけの状態から、背景・目的を伝えて一緒に仕事を進める使い方へ変わります。',
+  },
+  {
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    color: '#8b5cf6',
+    title: '自分の業務専用GPTを作る',
+    desc: '「毎回同じ説明をしなくていい」自分の仕事に特化したカスタムGPTを自分で設計・作成できるようになります。',
+  },
+  {
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="#06b6d4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    color: '#06b6d4',
+    title: 'AI活用を業務設計に組み込む',
+    desc: '「AIに何を任せて、人間が何を判断するか」を整理し、業務フローの中にAIを位置づけられるようになります。',
+  },
+];
+
+const targets = [
+  { icon: '💭', text: 'ChatGPTに「〇〇について教えて」しか言えていない' },
+  { icon: '😅', text: '使ってみたけどイマイチで、結局検索に戻った経験がある' },
+  { icon: '⏰', text: '同じ作業を毎日繰り返していて、もっと楽にしたい' },
+  { icon: '🤔', text: 'AIが気になっているけど、何から始めればいいか分からない' },
+];
+
+const phases = [
+  { num: '前半', days: 'Day 1〜3', color: '#3b82f6', title: 'ChatGPT 基礎', desc: '検索から「仕事の相談」へ。背景つきのお願いで回答の質が劇的に変わります。' },
+  { num: '中盤', days: 'Day 4〜6', color: '#8b5cf6', title: '自分に合わせる', desc: '設定・プロジェクト・プロンプト。自分の業務スタイルに合わせていきます。' },
+  { num: '後半', days: 'Day 7〜10', color: '#06b6d4', title: '自分のGPTを作る', desc: '業務整理→GPT作成→フロー配置→改善提案。実践まで一気に走ります。' },
+];
 ---
 
-<Layout title="ホーム">
+<PublicLayout title="AI研修プログラム" description="AIに仕事を奪われない人になる10日間研修。ChatGPTの基礎から自分の業務専用GPTを作るところまで。">
 
   <!-- ===== HERO ===== -->
   <section style="
-    position: relative;
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    background: linear-gradient(135deg, #050b18 0%, #0a1628 40%, #0d0b20 70%, #050b18 100%);
+    position:relative;min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    background:linear-gradient(135deg,#050b18 0%,#0a1628 40%,#0d0b20 70%,#050b18 100%);
   " class="grid-bg">
 
-    <!-- アニメーションオーブ -->
-    <div class="animate-orb" style="
-      position: absolute; top: 10%; left: 8%;
-      width: 500px; height: 500px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    "></div>
-    <div class="animate-orb2" style="
-      position: absolute; bottom: 10%; right: 5%;
-      width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
-      pointer-events: none;
-    "></div>
-    <div class="animate-float" style="
-      position: absolute; top: 20%; right: 15%;
-      width: 200px; height: 200px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    "></div>
+    <!-- オーブ -->
+    <div class="animate-orb" style="position:absolute;top:5%;left:5%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+    <div class="animate-orb2" style="position:absolute;bottom:5%;right:3%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.09) 0%,transparent 70%);pointer-events:none;"></div>
 
     <!-- フローティングドット -->
     {[
-      { top: '15%', left: '20%', size: '6px', delay: '0s', color: '#3b82f6' },
-      { top: '25%', right: '25%', size: '4px', delay: '1s', color: '#8b5cf6' },
-      { top: '60%', left: '10%', size: '5px', delay: '2s', color: '#06b6d4' },
-      { top: '70%', right: '20%', size: '4px', delay: '0.5s', color: '#3b82f6' },
-      { top: '40%', left: '5%', size: '3px', delay: '1.5s', color: '#f59e0b' },
-      { top: '80%', left: '40%', size: '5px', delay: '2.5s', color: '#8b5cf6' },
-    ].map(({ top, left, right, size, delay, color }) => (
-      <div style={`
-        position: absolute;
-        top: ${top}; ${left ? `left: ${left};` : `right: ${right};`}
-        width: ${size}; height: ${size};
-        border-radius: 50%;
-        background: ${color};
-        box-shadow: 0 0 8px ${color};
-        animation: dot-pulse 3s ease-in-out infinite ${delay};
-        pointer-events: none;
-      `}></div>
+      {top:'12%',left:'18%',size:'6px',delay:'0s',color:'#3b82f6'},
+      {top:'22%',right:'22%',size:'4px',delay:'1.2s',color:'#8b5cf6'},
+      {top:'65%',left:'8%',size:'5px',delay:'2s',color:'#06b6d4'},
+      {top:'72%',right:'18%',size:'4px',delay:'0.6s',color:'#3b82f6'},
+      {top:'45%',left:'4%',size:'3px',delay:'1.8s',color:'#f59e0b'},
+    ].map(({top,left,right,size,delay,color})=>(
+      <div style={`position:absolute;top:${top};${left?`left:${left};`:`right:${right};`}width:${size};height:${size};border-radius:50%;background:${color};box-shadow:0 0 8px ${color};animation:dot-pulse 3s ease-in-out infinite ${delay};pointer-events:none;`}></div>
     ))}
 
-    <!-- コンテンツ -->
-    <div style="position: relative; z-index: 10; text-align: center; padding: 0 24px; max-width: 860px; margin: 0 auto;">
+    <div style="position:relative;z-index:10;text-align:center;padding:0 24px;max-width:820px;margin:0 auto;">
 
       <!-- バッジ -->
-      <div style="
-        display: inline-flex; align-items: center; gap: 8px;
-        padding: 6px 16px;
-        border: 1px solid rgba(59,130,246,0.4);
-        border-radius: 100px;
-        background: rgba(59,130,246,0.08);
-        font-size: 0.78rem;
-        color: #60a5fa;
-        letter-spacing: 0.08em;
-        margin-bottom: 28px;
-        animation: fade-in 0.8s ease-out forwards;
-      ">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border:1px solid rgba(59,130,246,0.4);border-radius:100px;background:rgba(59,130,246,0.08);font-size:0.78rem;color:#60a5fa;letter-spacing:0.08em;margin-bottom:32px;animation:fade-in 0.8s ease-out both;">
         <span style="width:7px;height:7px;border-radius:50%;background:#3b82f6;box-shadow:0 0 8px #3b82f6;animation:dot-pulse 2s ease-in-out infinite;"></span>
-        AI研修プログラム — 10 Days
+        社内AI研修プログラム — 10 Days
       </div>
 
       <!-- メインキャッチ -->
-      <h1 style="
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        font-weight: 900;
-        line-height: 1.2;
-        margin-bottom: 16px;
-        animation: fade-up 0.9s ease-out 0.2s both;
-        color: #f1f5f9;
-        letter-spacing: -0.02em;
-      ">
-        AIに仕事を奪われない<br />
+      <h1 style="font-size:clamp(2rem,5.5vw,3.8rem);font-weight:900;line-height:1.15;margin-bottom:20px;color:#f1f5f9;letter-spacing:-0.02em;animation:fade-up 0.9s ease-out 0.2s both;">
+        AIに仕事を奪われない<br/>
         <span class="shimmer-text">人になる10日間</span>
       </h1>
 
-      <p style="
-        font-size: clamp(1rem, 2.5vw, 1.2rem);
-        color: #94a3b8;
-        margin-bottom: 10px;
-        animation: fade-up 0.9s ease-out 0.4s both;
-      ">〜 検索するAIから、仕事を一緒に進めるAIへ 〜</p>
-
-      <p style="
-        font-size: 0.9rem; color: #94a3b8;
-        max-width: 520px; margin: 0 auto 40px;
-        line-height: 1.8;
-        animation: fade-up 0.9s ease-out 0.55s both;
-      ">
-        ChatGPTをまだ「検索の道具」として使っている方へ。<br />
-        10日間で「仕事のパートナー」として使いこなせるようになります。
+      <p style="font-size:clamp(1rem,2.5vw,1.15rem);color:#94a3b8;margin-bottom:12px;line-height:1.7;animation:fade-up 0.9s ease-out 0.35s both;">
+        ChatGPTをまだ「検索の道具」として使っていませんか？
+      </p>
+      <p style="font-size:0.92rem;color:#64748b;margin-bottom:48px;line-height:1.8;animation:fade-up 0.9s ease-out 0.45s both;">
+        10日間で「仕事のパートナー」として使いこなし、<br/>
+        自分の業務専用GPTを作れるようになります。
       </p>
 
       <!-- CTAボタン -->
-      <div style="
-        display: flex; flex-wrap: wrap; gap: 12px;
-        justify-content: center;
-        animation: fade-up 0.9s ease-out 0.7s both;
-      ">
-        <a href="/curriculum" style="
-          display: inline-flex; align-items: center; gap: 8px;
-          padding: 14px 32px;
-          border-radius: 12px;
-          font-size: 0.95rem; font-weight: 700;
-          color: #fff;
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-          box-shadow: 0 0 30px rgba(59,130,246,0.4), 0 4px 16px rgba(0,0,0,0.3);
-          text-decoration: none;
-          transition: box-shadow 0.3s ease, transform 0.2s ease;
+      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;animation:fade-up 0.9s ease-out 0.6s both;">
+        <a href="#register" style="
+          display:inline-flex;align-items:center;gap:8px;
+          padding:15px 36px;border-radius:12px;
+          font-size:1rem;font-weight:700;color:#fff;
+          background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+          box-shadow:0 0 32px rgba(59,130,246,0.45);
+          text-decoration:none;transition:all 0.25s;
         "
-        onmouseover="this.style.boxShadow='0 0 50px rgba(59,130,246,0.7), 0 8px 24px rgba(0,0,0,0.4)';this.style.transform='translateY(-2px)'"
-        onmouseout="this.style.boxShadow='0 0 30px rgba(59,130,246,0.4), 0 4px 16px rgba(0,0,0,0.3)';this.style.transform='translateY(0)'"
-        >
-          📚 カリキュラムを見る
-          <span style="font-size:0.8rem;opacity:0.8;">→</span>
-        </a>
-        <a href="/gpts" style="
-          display: inline-flex; align-items: center; gap: 8px;
-          padding: 14px 32px;
-          border-radius: 12px;
-          font-size: 0.95rem; font-weight: 600;
-          color: #94a3b8;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(59,130,246,0.25);
-          text-decoration: none;
-          transition: all 0.3s ease;
+        onmouseover="this.style.boxShadow='0 0 56px rgba(59,130,246,0.7)';this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.boxShadow='0 0 32px rgba(59,130,246,0.45)';this.style.transform='translateY(0)'"
+        >受講申し込み →</a>
+
+        <a href="/login" style="
+          display:inline-flex;align-items:center;gap:8px;
+          padding:15px 36px;border-radius:12px;
+          font-size:1rem;font-weight:600;color:#94a3b8;
+          background:rgba(255,255,255,0.04);
+          border:1px solid rgba(59,130,246,0.25);
+          text-decoration:none;transition:all 0.25s;
         "
-        onmouseover="this.style.background='rgba(59,130,246,0.1)';this.style.borderColor='rgba(59,130,246,0.5)';this.style.color='#e2e8f0'"
-        onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(59,130,246,0.25)';this.style.color='#94a3b8'"
-        >
-          🤖 GPTsの使い方
-        </a>
+        onmouseover="this.style.color='#e2e8f0';this.style.background='rgba(59,130,246,0.08)';this.style.borderColor='rgba(59,130,246,0.5)'"
+        onmouseout="this.style.color='#94a3b8';this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(59,130,246,0.25)'"
+        >すでに登録済みの方</a>
       </div>
 
-      <!-- スクロールインジケーター -->
-      <div style="
-        margin-top: 60px;
-        display: flex; flex-direction: column; align-items: center; gap: 6px;
-        animation: fade-in 1.2s ease-out 1.2s both;
-      ">
-        <div style="font-size: 0.72rem; color: #64748b; letter-spacing: 0.1em;">SCROLL</div>
-        <div style="
-          width: 1px; height: 40px;
-          background: linear-gradient(to bottom, #3b82f6, transparent);
-          animation: float 2s ease-in-out infinite;
-        "></div>
+      <!-- スクロール -->
+      <div style="margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:6px;animation:fade-in 1.2s 1.2s both;">
+        <div style="font-size:0.68rem;color:#334155;letter-spacing:0.12em;">SCROLL</div>
+        <div style="width:1px;height:40px;background:linear-gradient(to bottom,#3b82f6,transparent);animation:float 2s ease-in-out infinite;"></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== 研修の3フェーズ ===== -->
-  <section style="padding: 100px 24px; background: var(--c-bg);">
-    <div style="max-width: 1080px; margin: 0 auto;">
-      <div class="reveal" style="text-align: center; margin-bottom: 64px;">
-        <div style="font-size:0.75rem;letter-spacing:0.15em;color:#3b82f6;font-weight:700;margin-bottom:12px;text-transform:uppercase;">Program Structure</div>
-        <h2 style="font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #f1f5f9;">研修の流れ</h2>
+  <!-- ===== こんな方向け ===== -->
+  <section style="padding:100px 24px;background:rgba(10,22,40,0.6);">
+    <div style="max-width:900px;margin:0 auto;">
+      <div class="reveal" style="text-align:center;margin-bottom:56px;">
+        <div style="font-size:0.72rem;letter-spacing:0.15em;color:#3b82f6;font-weight:700;margin-bottom:10px;text-transform:uppercase;">For You</div>
+        <h2 style="font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:900;color:#f1f5f9;">こんな方に向けた研修です</h2>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
-        {[
-          {
-            phase: '前半', days: 'Day 1〜3',
-            iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
-            title: 'ChatGPT 基礎',
-            desc: '検索から「仕事の相談」へ。背景つきのお願いで、回答の質が劇的に変わります。',
-            color: '#3b82f6', glow: 'rgba(59,130,246,0.2)',
-            num: 1
-          },
-          {
-            phase: '中盤', days: 'Day 4〜6',
-            iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="#8b5cf6" stroke-width="1.8"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round"/></svg>`,
-            title: '自分に合わせる',
-            desc: '設定・プロジェクト・指示の作り方を学び、ChatGPTを自分仕様にカスタマイズします。',
-            color: '#8b5cf6', glow: 'rgba(139,92,246,0.2)',
-            num: 2
-          },
-          {
-            phase: '後半', days: 'Day 7〜10',
-            iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="#06b6d4" stroke-width="1.8"/><path d="M12 8v4l3 3" stroke="#06b6d4" stroke-width="1.8" stroke-linecap="round"/><path d="M5 3L3 5M19 3l2 2M12 2v2" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg>`,
-            title: '自分のGPTを作る',
-            desc: '業務専用GPTを作成し、業務フローに組み込んで、改善提案にまとめます。',
-            color: '#06b6d4', glow: 'rgba(6,182,212,0.2)',
-            num: 3
-          },
-        ].map(({ phase, days: dayRange, iconSvg, title, desc, color, glow, num }) => (
-          <div class={`reveal glow-card stagger-${num}`} style="border-radius: 20px; padding: 36px 28px; position: relative; overflow: hidden;">
-            <!-- 上部グロー -->
-            <div style={`position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg, transparent, ${color}, transparent);`}></div>
-
-            <div style={`
-              display: inline-flex; align-items: center; justify-content: center;
-              width: 52px; height: 52px; border-radius: 14px;
-              background: ${glow};
-              border: 1px solid ${color}40;
-              margin-bottom: 20px;
-              box-shadow: 0 0 20px ${color}20;
-            `} set:html={iconSvg}></div>
-
-            <div style={`font-size:0.72rem;font-weight:700;letter-spacing:0.1em;color:${color};margin-bottom:6px;text-transform:uppercase;`}>{phase} — {dayRange}</div>
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: #f1f5f9; margin-bottom: 10px;">{title}</h3>
-            <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.75;">{desc}</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;">
+        {targets.map(({icon,text},i)=>(
+          <div class={`reveal stagger-${i+1} glow-card`} style="border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:16px;">
+            <span style="font-size:1.6rem;flex-shrink:0;">{icon}</span>
+            <p style="font-size:0.88rem;color:#94a3b8;line-height:1.6;">{text}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ===== 活用レベル ===== -->
-  <section style="padding: 80px 24px; background: rgba(13, 27, 46, 0.5);">
-    <div style="max-width: 1080px; margin: 0 auto;">
-      <div class="reveal" style="text-align: center; margin-bottom: 56px;">
-        <div style="font-size:0.75rem;letter-spacing:0.15em;color:#8b5cf6;font-weight:700;margin-bottom:12px;text-transform:uppercase;">Growth Levels</div>
-        <h2 style="font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #f1f5f9;">ChatGPT活用レベル（10段階）</h2>
-        <p style="color:#94a3b8;font-size:0.9rem;margin-top:10px;">研修を通じてLv.1からLv.10へ段階的に成長します</p>
+  <!-- ===== 身につくこと ===== -->
+  <section style="padding:100px 24px;background:var(--c-bg);">
+    <div style="max-width:1040px;margin:0 auto;">
+      <div class="reveal" style="text-align:center;margin-bottom:56px;">
+        <div style="font-size:0.72rem;letter-spacing:0.15em;color:#8b5cf6;font-weight:700;margin-bottom:10px;text-transform:uppercase;">What You'll Gain</div>
+        <h2 style="font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:900;color:#f1f5f9;">10日間で身につくこと</h2>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;" class="max-w-3xl mx-auto">
-        {[
-          { level: 1,  label: '検索・確認',            color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
-          { level: 2,  label: '言い換え',               color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
-          { level: 3,  label: '整理',                   color: '#06b6d4', bg: 'rgba(6,182,212,0.08)' },
-          { level: 4,  label: '抜け漏れ確認',           color: '#06b6d4', bg: 'rgba(6,182,212,0.08)' },
-          { level: 5,  label: '壁打ち・相談',           color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
-          { level: 6,  label: 'テンプレート化',         color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
-          { level: 7,  label: '業務の見える化',         color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
-          { level: 8,  label: '改善案づくり',           color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
-          { level: 9,  label: 'AI・人の役割分担',      color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)' },
-          { level: 10, label: 'AIオーケストレーション', color: '#ec4899', bg: 'rgba(236,72,153,0.1)' },
-        ].map(({ level, label, color, bg }, i) => (
-          <div class={`reveal-scale stagger-${i + 1}`} style={`
-            border: 1px solid ${color}30;
-            background: ${bg};
-            border-radius: 12px;
-            padding: 14px 8px;
-            text-align: center;
-            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-            cursor: default;
-          `}
-          onmouseover={`this.style.borderColor='${color}80';this.style.boxShadow='0 0 20px ${color}20';this.style.transform='scale(1.06)';`}
-          onmouseout={`this.style.borderColor='${color}30';this.style.boxShadow='none';this.style.transform='scale(1)';`}
-          >
-            <div style={`font-size: 1.1rem; font-weight: 800; color: ${color}; margin-bottom: 4px;`}>
-              {level < 10 ? `0${level}` : level}
-            </div>
-            <div style="font-size: 0.7rem; color: #94a3b8; line-height: 1.3;">{label}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+        {features.map(({icon,color,title,desc},i)=>(
+          <div class={`reveal stagger-${i+1} glow-card`} style={`border-radius:18px;padding:32px 28px;border-top:3px solid ${color};`}>
+            <div style={`width:48px;height:48px;border-radius:14px;background:${color}18;border:1px solid ${color}30;display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 0 20px ${color}15;`} set:html={icon}></div>
+            <h3 style={`font-size:1.05rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;`}>{title}</h3>
+            <p style="font-size:0.85rem;color:#94a3b8;line-height:1.8;">{desc}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ===== 10日間カリキュラム ===== -->
-  <section style="padding: 100px 24px; background: var(--c-bg);">
-    <div style="max-width: 1080px; margin: 0 auto;">
-      <div class="reveal" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px;">
-        <div>
-          <div style="font-size:0.75rem;letter-spacing:0.15em;color:#3b82f6;font-weight:700;margin-bottom:8px;text-transform:uppercase;">10-Day Curriculum</div>
-          <h2 style="font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #f1f5f9;">10日間カリキュラム</h2>
+  <!-- ===== 研修の流れ ===== -->
+  <section style="padding:100px 24px;background:rgba(10,22,40,0.5);">
+    <div style="max-width:960px;margin:0 auto;">
+      <div class="reveal" style="text-align:center;margin-bottom:56px;">
+        <div style="font-size:0.72rem;letter-spacing:0.15em;color:#06b6d4;font-weight:700;margin-bottom:10px;text-transform:uppercase;">Program Flow</div>
+        <h2 style="font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:900;color:#f1f5f9;">10日間の流れ</h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+        {phases.map(({num,days,color,title,desc},i)=>(
+          <div class={`reveal stagger-${i+1} glow-card`} style={`border-radius:18px;padding:28px;position:relative;overflow:hidden;`}>
+            <div style={`position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${color},transparent);`}></div>
+            <div style={`font-size:0.65rem;font-weight:700;letter-spacing:0.12em;color:${color};margin-bottom:4px;text-transform:uppercase;`}>{num}</div>
+            <div style={`font-size:0.75rem;color:${color}80;margin-bottom:16px;`}>{days}</div>
+            <h3 style="font-size:1.1rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;">{title}</h3>
+            <p style="font-size:0.84rem;color:#94a3b8;line-height:1.75;">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <!-- プログラム詳細 -->
+      <div class="reveal glow-card" style="border-radius:18px;padding:32px;margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;">
+        {[
+          {label:'期間',value:'10日間'},
+          {label:'形式',value:'オンライン自習'},
+          {label:'1日の目安',value:'90〜120分'},
+          {label:'必要ツール',value:'ChatGPT（Plus推奨）'},
+          {label:'練習サポート',value:'専用AI活用トレーナー'},
+          {label:'記録',value:'クリア報告システム'},
+        ].map(({label,value})=>(
+          <div>
+            <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;color:#3b82f6;margin-bottom:4px;text-transform:uppercase;">{label}</div>
+            <div style="font-size:0.95rem;font-weight:700;color:#e2e8f0;">{value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 受講申し込み ===== -->
+  <section id="register" style="padding:100px 24px;background:var(--c-bg);">
+    <div style="max-width:560px;margin:0 auto;">
+      <div class="reveal" style="text-align:center;margin-bottom:48px;">
+        <div style="font-size:0.72rem;letter-spacing:0.15em;color:#3b82f6;font-weight:700;margin-bottom:10px;text-transform:uppercase;">Sign Up</div>
+        <h2 style="font-size:clamp(1.6rem,3.5vw,2rem);font-weight:900;color:#f1f5f9;margin-bottom:10px;">受講申し込み</h2>
+        <p style="font-size:0.88rem;color:#94a3b8;">必要事項を入力して送信してください</p>
+      </div>
+
+      <!-- エラーメッセージ -->
+      {error && (
+        <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1rem;">⚠️</span>
+          <p style="font-size:0.85rem;color:#fca5a5;">{errorMessages[error] ?? error}</p>
         </div>
-        <a href="/curriculum" style="
-          font-size: 0.85rem; color: #3b82f6; text-decoration: none;
-          display:flex;align-items:center;gap:6px;
-          padding: 8px 16px; border: 1px solid rgba(59,130,246,0.3);
-          border-radius: 8px; transition: all 0.2s;
-        "
-        onmouseover="this.style.background='rgba(59,130,246,0.1)';this.style.borderColor='rgba(59,130,246,0.6)'"
-        onmouseout="this.style.background='transparent';this.style.borderColor='rgba(59,130,246,0.3)'"
-        >詳細を見る →</a>
-      </div>
+      )}
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
-        {days.map((day, i) => (
-          <div class={`reveal stagger-${(i % 5) + 1}`}>
-            <DayCard
-              day={day.data.day}
-              title={day.data.title}
-              level={day.data.level}
-              duration={day.data.duration}
-              id={day.id}
+      <!-- 登録完了メッセージ -->
+      {registered && (
+        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1rem;">✅</span>
+          <p style="font-size:0.85rem;color:#6ee7b7;">登録が完了しました。<a href="/login" style="color:#34d399;font-weight:700;">ログインページ</a>からログインしてください。</p>
+        </div>
+      )}
+
+      <!-- フォーム -->
+      <div class="reveal glow-card" style="border-radius:20px;padding:36px;border:1px solid rgba(59,130,246,0.2);">
+        <form action="/api/register" method="POST" style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- 氏名 -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              氏名 <span style="color:#ef4444;">*</span>
+            </label>
+            <input type="text" name="name" required placeholder="山田 太郎" style="
+              width:100%;padding:12px 16px;border-radius:10px;
+              background:rgba(15,23,42,0.8);
+              border:1px solid rgba(59,130,246,0.2);
+              color:#e2e8f0;font-size:0.9rem;outline:none;
+              transition:border-color 0.2s;box-sizing:border-box;
+            "
+            onfocus="this.style.borderColor='rgba(59,130,246,0.6)'"
+            onblur="this.style.borderColor='rgba(59,130,246,0.2)'"
             />
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
-  <!-- ===== AI・人の役割 ===== -->
-  <section style="padding: 80px 24px; background: rgba(13, 27, 46, 0.6);">
-    <div style="max-width: 900px; margin: 0 auto;">
-      <div class="reveal" style="text-align:center; margin-bottom: 48px;">
-        <div style="font-size:0.75rem;letter-spacing:0.15em;color:#f59e0b;font-weight:700;margin-bottom:12px;text-transform:uppercase;">Ground Rules</div>
-        <h2 style="font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; color: #f1f5f9;">研修中の重要ルール</h2>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;" class="max-sm:grid-cols-1">
-        <!-- OK -->
-        <div class="reveal glow-card stagger-1" style="border-radius: 16px; padding: 28px 24px; position: relative; overflow: hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#10b981,transparent);"></div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">✅</div>
-            <h3 style="font-weight:700;color:#10b981;font-size:0.95rem;">AIに任せてよいこと</h3>
+          <!-- 社員番号 -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              社員番号 <span style="color:#ef4444;">*</span>
+            </label>
+            <input type="text" name="employeeId" required placeholder="EMP-0001" style="
+              width:100%;padding:12px 16px;border-radius:10px;
+              background:rgba(15,23,42,0.8);
+              border:1px solid rgba(59,130,246,0.2);
+              color:#e2e8f0;font-size:0.9rem;outline:none;
+              transition:border-color 0.2s;box-sizing:border-box;
+            "
+            onfocus="this.style.borderColor='rgba(59,130,246,0.6)'"
+            onblur="this.style.borderColor='rgba(59,130,246,0.2)'"
+            />
           </div>
-          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
-            {['文章の下書き・言い換え・整理', 'チェックリスト作成', '抜け漏れ確認', '改善案のたたき台', 'メール返信案・Chatwork投稿文'].map(item => (
-              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#94a3b8;">
-                <span style="width:5px;height:5px;border-radius:50%;background:#10b981;flex-shrink:0;"></span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
 
-        <!-- NG -->
-        <div class="reveal glow-card stagger-2" style="border-radius: 16px; padding: 28px 24px; position: relative; overflow: hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ef4444,transparent);"></div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">❌</div>
-            <h3 style="font-weight:700;color:#ef4444;font-size:0.95rem;">AIに任せてはいけないこと</h3>
+          <!-- 所属部署 -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              所属部署 <span style="color:#ef4444;">*</span>
+            </label>
+            <input type="text" name="department" required placeholder="営業部" style="
+              width:100%;padding:12px 16px;border-radius:10px;
+              background:rgba(15,23,42,0.8);
+              border:1px solid rgba(59,130,246,0.2);
+              color:#e2e8f0;font-size:0.9rem;outline:none;
+              transition:border-color 0.2s;box-sizing:border-box;
+            "
+            onfocus="this.style.borderColor='rgba(59,130,246,0.6)'"
+            onblur="this.style.borderColor='rgba(59,130,246,0.2)'"
+            />
           </div>
-          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
-            {['お客様への最終回答', '請求金額・在庫数の確定', '返金・クレーム対応の最終判断', '個人情報・機密情報の入力', '上司確認が必要な判断'].map(item => (
-              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#94a3b8;">
-                <span style="width:5px;height:5px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
 
-      <p class="reveal" style="text-align:center;margin-top:28px;font-size:0.9rem;font-weight:700;color:#94a3b8;">
-        最終判断は、必ず <span style="color:#f59e0b;">人間</span> が行います。
-      </p>
-    </div>
-  </section>
+          <!-- メール -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              メールアドレス <span style="color:#ef4444;">*</span>
+            </label>
+            <input type="email" name="email" required placeholder="yamada@example.com" style="
+              width:100%;padding:12px 16px;border-radius:10px;
+              background:rgba(15,23,42,0.8);
+              border:1px solid rgba(59,130,246,0.2);
+              color:#e2e8f0;font-size:0.9rem;outline:none;
+              transition:border-color 0.2s;box-sizing:border-box;
+            "
+            onfocus="this.style.borderColor='rgba(59,130,246,0.6)'"
+            onblur="this.style.borderColor='rgba(59,130,246,0.2)'"
+            />
+          </div>
 
-  <!-- ===== クリア報告CTA ===== -->
-  <section style="padding: 100px 24px; background: var(--c-bg); text-align: center;">
-    <div style="max-width: 600px; margin: 0 auto;" class="reveal">
-      <div style="
-        padding: 60px 40px;
-        border-radius: 24px;
-        border: 1px solid rgba(59,130,246,0.2);
-        background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(139,92,246,0.05));
-        position: relative; overflow: hidden;
-      " class="animate-pulse-glow">
-        <!-- 背景グロー -->
-        <div style="position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.08),transparent 70%);pointer-events:none;"></div>
+          <!-- パスワード -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              パスワード <span style="color:#ef4444;">*</span>
+            </label>
+            <input type="password" name="password" required placeholder="8文字以上" minlength="8" style="
+              width:100%;padding:12px 16px;border-radius:10px;
+              background:rgba(15,23,42,0.8);
+              border:1px solid rgba(59,130,246,0.2);
+              color:#e2e8f0;font-size:0.9rem;outline:none;
+              transition:border-color 0.2s;box-sizing:border-box;
+            "
+            onfocus="this.style.borderColor='rgba(59,130,246,0.6)'"
+            onblur="this.style.borderColor='rgba(59,130,246,0.2)'"
+            />
+          </div>
 
-        <div style="font-size:2.5rem;margin-bottom:16px;">📝</div>
-        <h2 style="font-size:1.4rem;font-weight:800;color:#f1f5f9;margin-bottom:12px;">クリア報告を送る</h2>
-        <p style="font-size:0.88rem;color:#94a3b8;line-height:1.8;margin-bottom:32px;">
-          各Dayのワーク後に、学びの記録を提出してください。<br />
-          GPTsで「終了」と入力してまとめを取得し、フォームに貼り付けて送信します。
+          <!-- パスワード確認 -->
+          <div>
+            <label style="display:block;font-size:0.8rem;font-weight:700;color:#94a3b8;margin-bottom:8px;letter-spacing:0.05em;">
+              パスワード（確認） <span style="color:#ef4444;">*</span>
+            </label>
+            <input type="password" name="passwordConfirm" required placeholder="もう一度入力" minlength="8" style="
+              width:100%;padding:12px 16px;border-radius:10px;
+              background:rgba(15,23,42,0.8);
+              border:1px solid rgba(59,130,246,0.2);
+              color:#e2e8f0;font-size:0.9rem;outline:none;
+              transition:border-color 0.2s;box-sizing:border-box;
+            "
+            onfocus="this.style.borderColor='rgba(59,130,246,0.6)'"
+            onblur="this.style.borderColor='rgba(59,130,246,0.2)'"
+            />
+          </div>
+
+          <!-- 送信ボタン -->
+          <button type="submit" style="
+            width:100%;padding:14px;border-radius:12px;
+            background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+            color:#fff;font-size:1rem;font-weight:700;
+            border:none;cursor:pointer;
+            box-shadow:0 0 28px rgba(59,130,246,0.4);
+            transition:all 0.25s;margin-top:4px;
+          "
+          onmouseover="this.style.boxShadow='0 0 48px rgba(59,130,246,0.65)';this.style.transform='translateY(-1px)'"
+          onmouseout="this.style.boxShadow='0 0 28px rgba(59,130,246,0.4)';this.style.transform='translateY(0)'"
+          >申し込む</button>
+
+        </form>
+
+        <!-- ログインリンク -->
+        <p style="text-align:center;margin-top:24px;font-size:0.82rem;color:#64748b;">
+          すでに登録済みの方は
+          <a href="/login" style="color:#60a5fa;font-weight:600;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">ログインへ →</a>
         </p>
-        <a href="/submit" style="
-          display: inline-flex; align-items: center; gap: 8px;
-          padding: 14px 36px;
-          border-radius: 12px;
-          font-size: 1rem; font-weight: 700;
-          color: #fff;
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-          text-decoration: none;
-          box-shadow: 0 0 30px rgba(59,130,246,0.4);
-          transition: all 0.3s ease;
-        "
-        onmouseover="this.style.boxShadow='0 0 50px rgba(59,130,246,0.7)';this.style.transform='translateY(-2px)'"
-        onmouseout="this.style.boxShadow='0 0 30px rgba(59,130,246,0.4)';this.style.transform='translateY(0)'"
-        >
-          クリア報告フォームへ →
-        </a>
       </div>
     </div>
   </section>
 
-</Layout>
+</PublicLayout>
