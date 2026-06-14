@@ -10,42 +10,65 @@ interface Props {
 
 const { day, title, level, duration, id, isCompleted = false } = Astro.props;
 
-const phaseColors: Record<string, string> = {
-  '前半': 'bg-green-100 text-green-700 border-green-200',
-  '中盤': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  '後半': 'bg-purple-100 text-purple-700 border-purple-200',
-};
-
-function getPhase(day: number): string {
-  if (day <= 3) return '前半';
-  if (day <= 6) return '中盤';
-  return '後半';
+function getPhase(day: number): { label: string; color: string; bg: string; glow: string } {
+  if (day <= 3) return { label: '前半', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', glow: 'rgba(59,130,246,0.15)' };
+  if (day <= 6) return { label: '中盤', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)', glow: 'rgba(139,92,246,0.15)' };
+  return { label: '後半', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)', glow: 'rgba(6,182,212,0.15)' };
 }
 
 const phase = getPhase(day);
-const phaseColor = phaseColors[phase];
+const dayNum = String(day).padStart(2, '0');
 ---
 
 <a href={`/days/${id.replace('.md', '')}`}
-   class="block bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
-  <div class="flex items-start gap-4">
-    <div class="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-lg group-hover:bg-blue-700 transition-colors">
-      {day}
+   class="glow-card"
+   style={`
+     display: block;
+     border-radius: 16px;
+     padding: 20px 22px;
+     text-decoration: none;
+     position: relative;
+     overflow: hidden;
+   `}
+>
+  <!-- 上部グロー -->
+  <div style={`position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,${phase.color}60,transparent);`}></div>
+
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <!-- Day番号バッジ -->
+    <div style={`
+      flex-shrink: 0;
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, ${phase.color}20, ${phase.color}08);
+      border: 1px solid ${phase.color}40;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: box-shadow 0.3s;
+    `}>
+      <div style={`font-size: 0.55rem; font-weight: 700; color: ${phase.color}; letter-spacing: 0.08em; margin-bottom: 1px;`}>DAY</div>
+      <div style={`font-size: 1.1rem; font-weight: 900; color: ${phase.color}; line-height: 1;`}>{dayNum}</div>
     </div>
-    <div class="flex-1 min-w-0">
-      <div class="flex items-center gap-2 mb-1 flex-wrap">
-        <span class={`text-xs font-medium px-2 py-0.5 rounded-full border ${phaseColor}`}>
-          {phase}
-        </span>
-        <span class="text-xs text-gray-500">{level}</span>
+
+    <!-- コンテンツ -->
+    <div style="flex: 1; min-width: 0;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
+        <span style={`
+          font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+          color: ${phase.color}; background: ${phase.bg};
+          border: 1px solid ${phase.color}30;
+          padding: 2px 8px; border-radius: 100px;
+        `}>{phase.label}</span>
+        <span style="font-size: 0.72rem; color: #475569;">{level}</span>
       </div>
-      <h3 class="font-bold text-gray-800 text-sm leading-snug group-hover:text-blue-600 transition-colors">
+      <h3 style="font-size: 0.9rem; font-weight: 700; color: #cbd5e1; line-height: 1.45; margin-bottom: 5px; transition: color 0.2s;">
         {title}
       </h3>
-      <p class="text-xs text-gray-500 mt-1">所要時間：{duration}</p>
+      <p style="font-size: 0.75rem; color: #334155;">⏱ {duration}</p>
     </div>
-    <div class="flex-shrink-0 text-gray-300 group-hover:text-blue-400 transition-colors">
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+    <!-- 矢印 -->
+    <div style="flex-shrink: 0; color: #1e293b; transition: color 0.2s, transform 0.2s;">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </div>

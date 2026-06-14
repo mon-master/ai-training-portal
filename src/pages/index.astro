@@ -7,155 +7,388 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
 ---
 
 <Layout title="ホーム">
-  <!-- ヒーローセクション -->
-  <section class="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white py-16 px-4">
-    <div class="max-w-4xl mx-auto text-center">
-      <div class="text-5xl mb-4">🤖</div>
-      <h1 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">
-        AIに仕事を奪われない人になる<br class="hidden md:block" />
-        <span class="text-yellow-300">10日間研修</span>
+
+  <!-- ===== HERO ===== -->
+  <section style="
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #050b18 0%, #0a1628 40%, #0d0b20 70%, #050b18 100%);
+  " class="grid-bg">
+
+    <!-- アニメーションオーブ -->
+    <div class="animate-orb" style="
+      position: absolute; top: 10%; left: 8%;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    "></div>
+    <div class="animate-orb2" style="
+      position: absolute; bottom: 10%; right: 5%;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    "></div>
+    <div class="animate-float" style="
+      position: absolute; top: 20%; right: 15%;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    "></div>
+
+    <!-- フローティングドット -->
+    {[
+      { top: '15%', left: '20%', size: '6px', delay: '0s', color: '#3b82f6' },
+      { top: '25%', right: '25%', size: '4px', delay: '1s', color: '#8b5cf6' },
+      { top: '60%', left: '10%', size: '5px', delay: '2s', color: '#06b6d4' },
+      { top: '70%', right: '20%', size: '4px', delay: '0.5s', color: '#3b82f6' },
+      { top: '40%', left: '5%', size: '3px', delay: '1.5s', color: '#f59e0b' },
+      { top: '80%', left: '40%', size: '5px', delay: '2.5s', color: '#8b5cf6' },
+    ].map(({ top, left, right, size, delay, color }) => (
+      <div style={`
+        position: absolute;
+        top: ${top}; ${left ? `left: ${left};` : `right: ${right};`}
+        width: ${size}; height: ${size};
+        border-radius: 50%;
+        background: ${color};
+        box-shadow: 0 0 8px ${color};
+        animation: dot-pulse 3s ease-in-out infinite ${delay};
+        pointer-events: none;
+      `}></div>
+    ))}
+
+    <!-- コンテンツ -->
+    <div style="position: relative; z-index: 10; text-align: center; padding: 0 24px; max-width: 860px; margin: 0 auto;">
+
+      <!-- バッジ -->
+      <div style="
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 6px 16px;
+        border: 1px solid rgba(59,130,246,0.4);
+        border-radius: 100px;
+        background: rgba(59,130,246,0.08);
+        font-size: 0.78rem;
+        color: #60a5fa;
+        letter-spacing: 0.08em;
+        margin-bottom: 28px;
+        animation: fade-in 0.8s ease-out forwards;
+      ">
+        <span style="width:7px;height:7px;border-radius:50%;background:#3b82f6;box-shadow:0 0 8px #3b82f6;animation:dot-pulse 2s ease-in-out infinite;"></span>
+        AI研修プログラム — 10 Days
+      </div>
+
+      <!-- メインキャッチ -->
+      <h1 style="
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 900;
+        line-height: 1.2;
+        margin-bottom: 16px;
+        animation: fade-up 0.9s ease-out 0.2s both;
+        color: #f1f5f9;
+        letter-spacing: -0.02em;
+      ">
+        AIに仕事を奪われない<br />
+        <span class="shimmer-text">人になる10日間</span>
       </h1>
-      <p class="text-blue-100 text-lg mb-2">
-        〜検索するAIから、仕事を一緒に進めるAIへ〜
-      </p>
-      <p class="text-blue-200 text-sm max-w-xl mx-auto mt-4">
+
+      <p style="
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        color: #64748b;
+        margin-bottom: 10px;
+        animation: fade-up 0.9s ease-out 0.4s both;
+      ">〜 検索するAIから、仕事を一緒に進めるAIへ 〜</p>
+
+      <p style="
+        font-size: 0.9rem; color: #475569;
+        max-width: 520px; margin: 0 auto 40px;
+        line-height: 1.8;
+        animation: fade-up 0.9s ease-out 0.55s both;
+      ">
         ChatGPTをまだ「検索の道具」として使っている方へ。<br />
         10日間で「仕事のパートナー」として使いこなせるようになります。
       </p>
-      <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="/curriculum"
-           class="bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
-          カリキュラムを見る
+
+      <!-- CTAボタン -->
+      <div style="
+        display: flex; flex-wrap: wrap; gap: 12px;
+        justify-content: center;
+        animation: fade-up 0.9s ease-out 0.7s both;
+      ">
+        <a href="/curriculum" style="
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 14px 32px;
+          border-radius: 12px;
+          font-size: 0.95rem; font-weight: 700;
+          color: #fff;
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          box-shadow: 0 0 30px rgba(59,130,246,0.4), 0 4px 16px rgba(0,0,0,0.3);
+          text-decoration: none;
+          transition: box-shadow 0.3s ease, transform 0.2s ease;
+        "
+        onmouseover="this.style.boxShadow='0 0 50px rgba(59,130,246,0.7), 0 8px 24px rgba(0,0,0,0.4)';this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.boxShadow='0 0 30px rgba(59,130,246,0.4), 0 4px 16px rgba(0,0,0,0.3)';this.style.transform='translateY(0)'"
+        >
+          📚 カリキュラムを見る
+          <span style="font-size:0.8rem;opacity:0.8;">→</span>
         </a>
-        <a href="/gpts"
-           class="bg-white/20 text-white font-bold px-6 py-3 rounded-xl hover:bg-white/30 transition-colors border border-white/30">
-          GPTsの使い方
+        <a href="/gpts" style="
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 14px 32px;
+          border-radius: 12px;
+          font-size: 0.95rem; font-weight: 600;
+          color: #94a3b8;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(59,130,246,0.25);
+          text-decoration: none;
+          transition: all 0.3s ease;
+        "
+        onmouseover="this.style.background='rgba(59,130,246,0.1)';this.style.borderColor='rgba(59,130,246,0.5)';this.style.color='#e2e8f0'"
+        onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(59,130,246,0.25)';this.style.color='#94a3b8'"
+        >
+          🤖 GPTsの使い方
         </a>
+      </div>
+
+      <!-- スクロールインジケーター -->
+      <div style="
+        margin-top: 60px;
+        display: flex; flex-direction: column; align-items: center; gap: 6px;
+        animation: fade-in 1.2s ease-out 1.2s both;
+      ">
+        <div style="font-size: 0.72rem; color: #334155; letter-spacing: 0.1em;">SCROLL</div>
+        <div style="
+          width: 1px; height: 40px;
+          background: linear-gradient(to bottom, #3b82f6, transparent);
+          animation: float 2s ease-in-out infinite;
+        "></div>
       </div>
     </div>
   </section>
 
-  <!-- 研修の3フェーズ -->
-  <section class="py-12 px-4">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">研修の流れ</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-green-50 border border-green-200 rounded-xl p-6">
-          <div class="text-3xl mb-3">📖</div>
-          <div class="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">前半 Day 1〜3</div>
-          <h3 class="font-bold text-gray-800 mb-2">ChatGPT基礎</h3>
-          <p class="text-sm text-gray-600">検索から「仕事の相談」へ。背景つきのお願いで、回答の質が劇的に変わります。</p>
-        </div>
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
-          <div class="text-3xl mb-3">⚙️</div>
-          <div class="text-xs font-bold text-yellow-600 uppercase tracking-wider mb-1">中盤 Day 4〜6</div>
-          <h3 class="font-bold text-gray-800 mb-2">自分に合わせる</h3>
-          <p class="text-sm text-gray-600">設定・プロジェクト・指示の作り方を学び、ChatGPTを自分仕様にカスタマイズします。</p>
-        </div>
-        <div class="bg-purple-50 border border-purple-200 rounded-xl p-6">
-          <div class="text-3xl mb-3">🚀</div>
-          <div class="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">後半 Day 7〜10</div>
-          <h3 class="font-bold text-gray-800 mb-2">自分のGPTを作る</h3>
-          <p class="text-sm text-gray-600">業務専用GPTを作成し、業務フローに組み込んで、改善提案にまとめます。</p>
-        </div>
+  <!-- ===== 研修の3フェーズ ===== -->
+  <section style="padding: 100px 24px; background: var(--c-bg);">
+    <div style="max-width: 1080px; margin: 0 auto;">
+      <div class="reveal" style="text-align: center; margin-bottom: 64px;">
+        <div style="font-size:0.75rem;letter-spacing:0.15em;color:#3b82f6;font-weight:700;margin-bottom:12px;text-transform:uppercase;">Program Structure</div>
+        <h2 style="font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #f1f5f9;">研修の流れ</h2>
       </div>
-    </div>
-  </section>
 
-  <!-- ChatGPT活用レベル -->
-  <section class="bg-white py-12 px-4">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">ChatGPT活用レベル（10段階）</h2>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
         {[
-          { level: 1, label: '検索・確認', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-          { level: 2, label: '言い換え', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-          { level: 3, label: '整理', color: 'bg-green-50 border-green-200 text-green-700' },
-          { level: 4, label: '抜け漏れ確認', color: 'bg-green-50 border-green-200 text-green-700' },
-          { level: 5, label: '壁打ち・相談', color: 'bg-yellow-50 border-yellow-200 text-yellow-700' },
-          { level: 6, label: 'テンプレート化', color: 'bg-yellow-50 border-yellow-200 text-yellow-700' },
-          { level: 7, label: '業務の見える化', color: 'bg-orange-50 border-orange-200 text-orange-700' },
-          { level: 8, label: '改善案づくり', color: 'bg-orange-50 border-orange-200 text-orange-700' },
-          { level: 9, label: 'AI・人・システムの役割分担', color: 'bg-purple-50 border-purple-200 text-purple-700' },
-          { level: 10, label: 'AIオーケストレーション', color: 'bg-purple-50 border-purple-200 text-purple-700' },
-        ].map(({ level, label, color }) => (
-          <div class={`border rounded-lg p-3 text-center ${color}`}>
-            <div class="font-bold text-lg">Lv.{level}</div>
-            <div class="text-xs mt-1 leading-tight">{label}</div>
+          {
+            phase: '前半', days: 'Day 1〜3',
+            iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+            title: 'ChatGPT 基礎',
+            desc: '検索から「仕事の相談」へ。背景つきのお願いで、回答の質が劇的に変わります。',
+            color: '#3b82f6', glow: 'rgba(59,130,246,0.2)',
+            num: 1
+          },
+          {
+            phase: '中盤', days: 'Day 4〜6',
+            iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="#8b5cf6" stroke-width="1.8"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+            title: '自分に合わせる',
+            desc: '設定・プロジェクト・指示の作り方を学び、ChatGPTを自分仕様にカスタマイズします。',
+            color: '#8b5cf6', glow: 'rgba(139,92,246,0.2)',
+            num: 2
+          },
+          {
+            phase: '後半', days: 'Day 7〜10',
+            iconSvg: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="#06b6d4" stroke-width="1.8"/><path d="M12 8v4l3 3" stroke="#06b6d4" stroke-width="1.8" stroke-linecap="round"/><path d="M5 3L3 5M19 3l2 2M12 2v2" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg>`,
+            title: '自分のGPTを作る',
+            desc: '業務専用GPTを作成し、業務フローに組み込んで、改善提案にまとめます。',
+            color: '#06b6d4', glow: 'rgba(6,182,212,0.2)',
+            num: 3
+          },
+        ].map(({ phase, days: dayRange, iconSvg, title, desc, color, glow, num }) => (
+          <div class={`reveal glow-card stagger-${num}`} style="border-radius: 20px; padding: 36px 28px; position: relative; overflow: hidden;">
+            <!-- 上部グロー -->
+            <div style={`position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg, transparent, ${color}, transparent);`}></div>
+
+            <div style={`
+              display: inline-flex; align-items: center; justify-content: center;
+              width: 52px; height: 52px; border-radius: 14px;
+              background: ${glow};
+              border: 1px solid ${color}40;
+              margin-bottom: 20px;
+              box-shadow: 0 0 20px ${color}20;
+            `} set:html={iconSvg}></div>
+
+            <div style={`font-size:0.72rem;font-weight:700;letter-spacing:0.1em;color:${color};margin-bottom:6px;text-transform:uppercase;`}>{phase} — {dayRange}</div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #f1f5f9; margin-bottom: 10px;">{title}</h3>
+            <p style="font-size: 0.88rem; color: #64748b; line-height: 1.75;">{desc}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- 10日間カリキュラム一覧 -->
-  <section class="py-12 px-4">
-    <div class="max-w-5xl mx-auto">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold text-gray-800">10日間カリキュラム</h2>
-        <a href="/curriculum" class="text-blue-600 text-sm hover:underline">詳細を見る →</a>
+  <!-- ===== 活用レベル ===== -->
+  <section style="padding: 80px 24px; background: rgba(13, 27, 46, 0.5);">
+    <div style="max-width: 1080px; margin: 0 auto;">
+      <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+        <div style="font-size:0.75rem;letter-spacing:0.15em;color:#8b5cf6;font-weight:700;margin-bottom:12px;text-transform:uppercase;">Growth Levels</div>
+        <h2 style="font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #f1f5f9;">ChatGPT活用レベル（10段階）</h2>
+        <p style="color:#475569;font-size:0.9rem;margin-top:10px;">研修を通じてLv.1からLv.10へ段階的に成長します</p>
       </div>
-      <div class="grid md:grid-cols-2 gap-4">
-        {days.map((day) => (
-          <DayCard
-            day={day.data.day}
-            title={day.data.title}
-            level={day.data.level}
-            duration={day.data.duration}
-            id={day.id}
-          />
+
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;" class="max-w-3xl mx-auto">
+        {[
+          { level: 1,  label: '検索・確認',            color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
+          { level: 2,  label: '言い換え',               color: '#3b82f6', bg: 'rgba(59,130,246,0.08)' },
+          { level: 3,  label: '整理',                   color: '#06b6d4', bg: 'rgba(6,182,212,0.08)' },
+          { level: 4,  label: '抜け漏れ確認',           color: '#06b6d4', bg: 'rgba(6,182,212,0.08)' },
+          { level: 5,  label: '壁打ち・相談',           color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
+          { level: 6,  label: 'テンプレート化',         color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
+          { level: 7,  label: '業務の見える化',         color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
+          { level: 8,  label: '改善案づくり',           color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
+          { level: 9,  label: 'AI・人の役割分担',      color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)' },
+          { level: 10, label: 'AIオーケストレーション', color: '#ec4899', bg: 'rgba(236,72,153,0.1)' },
+        ].map(({ level, label, color, bg }, i) => (
+          <div class={`reveal-scale stagger-${i + 1}`} style={`
+            border: 1px solid ${color}30;
+            background: ${bg};
+            border-radius: 12px;
+            padding: 14px 8px;
+            text-align: center;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            cursor: default;
+          `}
+          onmouseover={`this.style.borderColor='${color}80';this.style.boxShadow='0 0 20px ${color}20';this.style.transform='scale(1.06)';`}
+          onmouseout={`this.style.borderColor='${color}30';this.style.boxShadow='none';this.style.transform='scale(1)';`}
+          >
+            <div style={`font-size: 1.1rem; font-weight: 800; color: ${color}; margin-bottom: 4px;`}>
+              {level < 10 ? `0${level}` : level}
+            </div>
+            <div style="font-size: 0.7rem; color: #64748b; line-height: 1.3;">{label}</div>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- 重要ルール -->
-  <section class="bg-amber-50 border-y border-amber-200 py-10 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-lg font-bold text-amber-800 mb-5 flex items-center gap-2">
-        <span>⚠️</span> 研修中の重要ルール
-      </h2>
-      <div class="grid md:grid-cols-2 gap-6">
+  <!-- ===== 10日間カリキュラム ===== -->
+  <section style="padding: 100px 24px; background: var(--c-bg);">
+    <div style="max-width: 1080px; margin: 0 auto;">
+      <div class="reveal" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px;">
         <div>
-          <h3 class="font-bold text-green-700 mb-2">✅ AIに任せてよいこと</h3>
-          <ul class="text-sm text-gray-700 space-y-1">
-            <li>• 文章の下書き・言い換え・整理</li>
-            <li>• チェックリスト作成</li>
-            <li>• 抜け漏れ確認</li>
-            <li>• 改善案のたたき台</li>
-            <li>• メール返信案・Chatwork投稿文</li>
+          <div style="font-size:0.75rem;letter-spacing:0.15em;color:#3b82f6;font-weight:700;margin-bottom:8px;text-transform:uppercase;">10-Day Curriculum</div>
+          <h2 style="font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #f1f5f9;">10日間カリキュラム</h2>
+        </div>
+        <a href="/curriculum" style="
+          font-size: 0.85rem; color: #3b82f6; text-decoration: none;
+          display:flex;align-items:center;gap:6px;
+          padding: 8px 16px; border: 1px solid rgba(59,130,246,0.3);
+          border-radius: 8px; transition: all 0.2s;
+        "
+        onmouseover="this.style.background='rgba(59,130,246,0.1)';this.style.borderColor='rgba(59,130,246,0.6)'"
+        onmouseout="this.style.background='transparent';this.style.borderColor='rgba(59,130,246,0.3)'"
+        >詳細を見る →</a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+        {days.map((day, i) => (
+          <div class={`reveal stagger-${(i % 5) + 1}`}>
+            <DayCard
+              day={day.data.day}
+              title={day.data.title}
+              level={day.data.level}
+              duration={day.data.duration}
+              id={day.id}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AI・人の役割 ===== -->
+  <section style="padding: 80px 24px; background: rgba(13, 27, 46, 0.6);">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <div class="reveal" style="text-align:center; margin-bottom: 48px;">
+        <div style="font-size:0.75rem;letter-spacing:0.15em;color:#f59e0b;font-weight:700;margin-bottom:12px;text-transform:uppercase;">Ground Rules</div>
+        <h2 style="font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; color: #f1f5f9;">研修中の重要ルール</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;" class="max-sm:grid-cols-1">
+        <!-- OK -->
+        <div class="reveal glow-card stagger-1" style="border-radius: 16px; padding: 28px 24px; position: relative; overflow: hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#10b981,transparent);"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">✅</div>
+            <h3 style="font-weight:700;color:#10b981;font-size:0.95rem;">AIに任せてよいこと</h3>
+          </div>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+            {['文章の下書き・言い換え・整理', 'チェックリスト作成', '抜け漏れ確認', '改善案のたたき台', 'メール返信案・Chatwork投稿文'].map(item => (
+              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#64748b;">
+                <span style="width:5px;height:5px;border-radius:50%;background:#10b981;flex-shrink:0;"></span>
+                {item}
+              </li>
+            ))}
           </ul>
         </div>
-        <div>
-          <h3 class="font-bold text-red-700 mb-2">❌ AIに任せてはいけないこと</h3>
-          <ul class="text-sm text-gray-700 space-y-1">
-            <li>• お客様への最終回答</li>
-            <li>• 請求金額・在庫数の確定</li>
-            <li>• 返金・クレーム対応の最終判断</li>
-            <li>• 個人情報・機密情報の入力</li>
-            <li>• 上司確認が必要な判断</li>
+
+        <!-- NG -->
+        <div class="reveal glow-card stagger-2" style="border-radius: 16px; padding: 28px 24px; position: relative; overflow: hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ef4444,transparent);"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">❌</div>
+            <h3 style="font-weight:700;color:#ef4444;font-size:0.95rem;">AIに任せてはいけないこと</h3>
+          </div>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+            {['お客様への最終回答', '請求金額・在庫数の確定', '返金・クレーム対応の最終判断', '個人情報・機密情報の入力', '上司確認が必要な判断'].map(item => (
+              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#64748b;">
+                <span style="width:5px;height:5px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
+                {item}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
-      <p class="text-sm font-bold text-amber-800 mt-5 text-center">
-        最終判断は、必ず人間が行います。
+
+      <p class="reveal" style="text-align:center;margin-top:28px;font-size:0.9rem;font-weight:700;color:#64748b;">
+        最終判断は、必ず <span style="color:#f59e0b;">人間</span> が行います。
       </p>
     </div>
   </section>
 
-  <!-- ワークログ提出 -->
-  <section class="py-12 px-4 text-center">
-    <div class="max-w-2xl mx-auto">
-      <div class="text-4xl mb-4">📝</div>
-      <h2 class="text-xl font-bold text-gray-800 mb-3">ワークログを提出する</h2>
-      <p class="text-gray-600 text-sm mb-6">
-        各Dayのワーク後に、学びの記録を提出してください。<br />
-        GPTsで「終了」と入力してまとめを取得し、フォームに貼り付けて送信します。
-      </p>
-      <a href="/submit"
-         class="inline-block bg-blue-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg">
-        ワークログ提出フォームへ
-      </a>
+  <!-- ===== ワークログCTA ===== -->
+  <section style="padding: 100px 24px; background: var(--c-bg); text-align: center;">
+    <div style="max-width: 600px; margin: 0 auto;" class="reveal">
+      <div style="
+        padding: 60px 40px;
+        border-radius: 24px;
+        border: 1px solid rgba(59,130,246,0.2);
+        background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(139,92,246,0.05));
+        position: relative; overflow: hidden;
+      " class="animate-pulse-glow">
+        <!-- 背景グロー -->
+        <div style="position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.08),transparent 70%);pointer-events:none;"></div>
+
+        <div style="font-size:2.5rem;margin-bottom:16px;">📝</div>
+        <h2 style="font-size:1.4rem;font-weight:800;color:#f1f5f9;margin-bottom:12px;">ワークログを提出する</h2>
+        <p style="font-size:0.88rem;color:#64748b;line-height:1.8;margin-bottom:32px;">
+          各Dayのワーク後に、学びの記録を提出してください。<br />
+          GPTsで「終了」と入力してまとめを取得し、フォームに貼り付けて送信します。
+        </p>
+        <a href="/submit" style="
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 14px 36px;
+          border-radius: 12px;
+          font-size: 1rem; font-weight: 700;
+          color: #fff;
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          text-decoration: none;
+          box-shadow: 0 0 30px rgba(59,130,246,0.4);
+          transition: all 0.3s ease;
+        "
+        onmouseover="this.style.boxShadow='0 0 50px rgba(59,130,246,0.7)';this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.boxShadow='0 0 30px rgba(59,130,246,0.4)';this.style.transform='translateY(0)'"
+        >
+          ワークログ提出フォームへ →
+        </a>
+      </div>
     </div>
   </section>
+
 </Layout>
