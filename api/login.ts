@@ -1,7 +1,8 @@
 export const config = { runtime: 'edge' };
 
-const GAS_URL    = process.env.GAS_URL!;
-const JWT_SECRET = process.env.JWT_SECRET ?? 'change-me-in-vercel-env';
+const GAS_URL           = process.env.GAS_URL!;
+const JWT_SECRET        = process.env.JWT_SECRET ?? 'change-me-in-vercel-env';
+const EMPLOYEE_PASSWORD = process.env.EMPLOYEE_PASSWORD ?? '';
 
 // Base64url エンコード
 function b64url(buf: ArrayBuffer | string): string {
@@ -45,12 +46,17 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.redirect(`${origin}/login?error=missing`, 302);
     }
 
-    // GASで認証
+    // 共通パスワードをVercel側で照合（GASにパスワードを渡さない）
+    if (!EMPLOYEE_PASSWORD || password !== EMPLOYEE_PASSWORD) {
+      return Response.redirect(`${origin}/login?error=invalid`, 302);
+    }
+
+    // GASで社員番号の存在確認＋ユーザー情報取得
     const gasRes = await fetch(GAS_URL, {
       method:   'POST',
       redirect: 'follow',
       headers:  { 'Content-Type': 'application/json' },
-      body:     JSON.stringify({ action: 'login', employeeId, password }),
+      body:     JSON.stringify({ action: 'getUser', employeeId }),
     });
 
     const result = await gasRes.json() as {
