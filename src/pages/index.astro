@@ -94,7 +94,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
 
       <p style="
         font-size: clamp(1rem, 2.5vw, 1.2rem);
-        color: #64748b;
+        color: #94a3b8;
         margin-bottom: 10px;
         animation: fade-up 0.9s ease-out 0.4s both;
       ">〜 検索するAIから、仕事を一緒に進めるAIへ 〜</p>
@@ -156,7 +156,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
         display: flex; flex-direction: column; align-items: center; gap: 6px;
         animation: fade-in 1.2s ease-out 1.2s both;
       ">
-        <div style="font-size: 0.72rem; color: #475569; letter-spacing: 0.1em;">SCROLL</div>
+        <div style="font-size: 0.72rem; color: #64748b; letter-spacing: 0.1em;">SCROLL</div>
         <div style="
           width: 1px; height: 40px;
           background: linear-gradient(to bottom, #3b82f6, transparent);
@@ -216,7 +216,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
 
             <div style={`font-size:0.72rem;font-weight:700;letter-spacing:0.1em;color:${color};margin-bottom:6px;text-transform:uppercase;`}>{phase} — {dayRange}</div>
             <h3 style="font-size: 1.15rem; font-weight: 700; color: #f1f5f9; margin-bottom: 10px;">{title}</h3>
-            <p style="font-size: 0.88rem; color: #64748b; line-height: 1.75;">{desc}</p>
+            <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.75;">{desc}</p>
           </div>
         ))}
       </div>
@@ -320,7 +320,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
           </div>
           <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
             {['文章の下書き・言い換え・整理', 'チェックリスト作成', '抜け漏れ確認', '改善案のたたき台', 'メール返信案・Chatwork投稿文'].map(item => (
-              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#64748b;">
+              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#94a3b8;">
                 <span style="width:5px;height:5px;border-radius:50%;background:#10b981;flex-shrink:0;"></span>
                 {item}
               </li>
@@ -337,7 +337,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
           </div>
           <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
             {['お客様への最終回答', '請求金額・在庫数の確定', '返金・クレーム対応の最終判断', '個人情報・機密情報の入力', '上司確認が必要な判断'].map(item => (
-              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#64748b;">
+              <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:#94a3b8;">
                 <span style="width:5px;height:5px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
                 {item}
               </li>
@@ -346,7 +346,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
         </div>
       </div>
 
-      <p class="reveal" style="text-align:center;margin-top:28px;font-size:0.9rem;font-weight:700;color:#64748b;">
+      <p class="reveal" style="text-align:center;margin-top:28px;font-size:0.9rem;font-weight:700;color:#94a3b8;">
         最終判断は、必ず <span style="color:#f59e0b;">人間</span> が行います。
       </p>
     </div>
@@ -367,7 +367,7 @@ const days = (await getCollection('days')).sort((a, b) => a.data.day - b.data.da
 
         <div style="font-size:2.5rem;margin-bottom:16px;">📝</div>
         <h2 style="font-size:1.4rem;font-weight:800;color:#f1f5f9;margin-bottom:12px;">クリア報告を送る</h2>
-        <p style="font-size:0.88rem;color:#64748b;line-height:1.8;margin-bottom:32px;">
+        <p style="font-size:0.88rem;color:#94a3b8;line-height:1.8;margin-bottom:32px;">
           各Dayのワーク後に、学びの記録を提出してください。<br />
           GPTsで「終了」と入力してまとめを取得し、フォームに貼り付けて送信します。
         </p>
