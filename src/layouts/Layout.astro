@@ -115,12 +115,21 @@ const { title, description = 'AIに仕事を奪われない人になる10日間�
           onmouseover="this.style.boxShadow='0 0 25px rgba(59,130,246,0.6)';this.style.transform='translateY(-1px)'"
           onmouseout="this.style.boxShadow='0 0 15px rgba(59,130,246,0.3)';this.style.transform='translateY(0)'"
           >📝 クリア報告</a>
+
+          <a href="/api/logout" style="
+            padding:7px 14px;border-radius:8px;font-size:0.82rem;
+            color:#64748b;text-decoration:none;transition:all 0.2s;
+          "
+          onmouseover="this.style.color='#f87171';this.style.background='rgba(239,68,68,0.08)'"
+          onmouseout="this.style.color='#64748b';this.style.background='transparent'"
+          >ログアウト</a>
         </nav>
 
         <!-- モバイル -->
         <nav class="md:hidden flex gap-2">
           <a href="/curriculum" style="padding:5px 10px;border-radius:6px;font-size:0.75rem;color:#94a3b8;background:rgba(59,130,246,0.1);">カリキュラム</a>
           <a href="/gpts" style="padding:5px 10px;border-radius:6px;font-size:0.75rem;color:#94a3b8;background:rgba(59,130,246,0.1);">GPTs</a>
+          <a href="/api/logout" style="padding:5px 10px;border-radius:6px;font-size:0.75rem;color:#94a3b8;background:rgba(239,68,68,0.08);">ログアウト</a>
         </nav>
       </div>
     </header>
